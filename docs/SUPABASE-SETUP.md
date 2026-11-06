@@ -1,5 +1,7 @@
 # Supabase setup and first Super Admin
 
+**Important:** No administrator account or password is included in the ZIP. The `/admin/` page becomes usable only after completing every step below. For a short checklist, also read `ADMIN-ACCESS-START-HERE.txt`.
+
 ## 1. Create the project
 1. On your Android browser, open https://supabase.com and create a free project.
 2. Choose a strong database password and keep it in a password manager. Free projects can pause after inactivity and have usage/storage limits; check the current Supabase pricing page before launch.
