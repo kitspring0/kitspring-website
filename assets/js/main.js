@@ -14,13 +14,14 @@
     }));
   }
   $$("[data-year]").forEach(el => el.textContent = new Date().getFullYear());
-  const products = window.KITSPRING_PRODUCTS || [];
+  let products = window.KITSPRING_PRODUCTS || [];
+  const safeHttps = s => { try { const u = new URL(String(s)); return u.protocol === "https:" ? u.href : ""; } catch (_) { return ""; } };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const collectionNames = {business:"Business",productivity:"Productivity",lifestyle:"Lifestyle",creative:"Creative",guides:"Guides"};
   function card(p) {
     const status = p.status === "available" ? "Available" : "Coming Soon";
     return `<article class="product-card">
-      <div class="product-top"><span class="product-type">${esc(p.type)}</span><span class="status">${status}</span></div>
+      <div class="product-cover">${p.coverUrl ? `<img src="${esc((p.coverUrl.startsWith("http") ? safeHttps(p.coverUrl) : (location.pathname.includes("/collections/") ? "../" : "") + p.coverUrl))}" alt="" loading="lazy">` : ""}</div><div class="product-top"><span class="product-type">${esc(p.type)}</span><span class="status">${status}</span></div>
       <h3>${esc(p.name)}</h3><p>${esc(p.shortDescription)}</p>
       <a class="card-link" href="${location.pathname.includes("/collections/") ? "../" : ""}product.html?id=${encodeURIComponent(p.id)}">Explore resource <span aria-hidden="true">→</span></a>
     </article>`;
@@ -44,6 +45,7 @@
     render();
   }
   const detail = $("#productDetail");
+  function renderDetail() {
   if (detail) {
     const id = new URLSearchParams(location.search).get("id");
     const p = products.find(x=>x.id===id);
@@ -51,7 +53,8 @@
       detail.innerHTML = `<div class="notice">We couldn't find that resource. Browse the <a href="shop.html">full catalogue</a> instead.</div>`;
     } else {
       document.title = `${p.name} | KitSpring`;
-      const available = p.status === "available" && p.checkoutUrl;
+      const checkoutUrl = safeHttps(p.checkoutUrl);
+      const available = p.status === "available" && checkoutUrl;
       detail.innerHTML = `
         <div class="detail-layout">
           <div>
@@ -65,13 +68,29 @@
           <aside class="detail-panel">
             <span class="status">${p.status==="available"?"Available":"Coming Soon"}</span>
             <h2 style="margin-top:18px">A useful resource, thoughtfully made.</h2>
+            ${p.price != null ? `<p class="price">${esc(p.currency || "USD")} ${esc(Number(p.price).toFixed(2))}</p>` : ""}
             <p class="muted">${p.status==="available"?"This resource is available through our secure external checkout.":"This resource is still in development. It is not currently available to purchase."}</p>
-            ${available ? `<a class="btn" href="${esc(p.checkoutUrl)}" target="_blank" rel="noopener noreferrer">Get this resource</a>` : `<span class="btn btn-outline" aria-disabled="true">Coming Soon</span>`}
+            ${available ? `<a class="btn" href="${esc(checkoutUrl)}" target="_blank" rel="noopener noreferrer">Get this resource</a>` : `<span class="btn btn-outline" aria-disabled="true">Coming Soon</span>`}
             <p class="muted" style="font-size:.82rem;margin-top:18px">Questions? <a href="contact.html">Contact KitSpring</a>.</p>
           </aside>
         </div>`;
     }
   }
+  }
+  renderDetail();
+  // Optional live catalogue: once public Supabase config is supplied, published CMS products replace the bundled fallback.
+  (async () => {
+    const cfg = window.KITSPRING_PUBLIC_CONFIG;
+    if (!cfg?.supabaseUrl || !cfg?.supabaseAnonKey || !window.supabase?.createClient) return;
+    try {
+      const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+      const { data, error } = await client.from("products").select("id,name,slug,collection,type,short_description,description,details,audience,includes,status,featured,price,currency,checkout_url,cover_url").eq("visible", true).in("status", ["published", "coming_soon"]).order("featured", {ascending:false});
+      if (error || !data?.length) return;
+      products = data.map(p => ({id:p.slug,name:p.name,collection:p.collection,type:p.type,description:p.description,shortDescription:p.short_description,audience:p.audience,includes:Array.isArray(p.includes)?p.includes:[],status:p.status==='published'&&p.checkout_url?'available':'coming-soon',featured:p.featured,price:p.price,currency:p.currency,details:p.details,checkoutUrl:p.checkout_url,coverUrl:p.cover_url}));
+      if (grid) render();
+      if (detail) renderDetail();
+    } catch (_) { /* Keep the bundled catalogue available if the optional backend is unreachable. */ }
+  })();
   const contactForm = $("#contactForm");
   if(contactForm) contactForm.addEventListener("submit", e=>{
     e.preventDefault();

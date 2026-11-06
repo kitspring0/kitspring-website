@@ -1,6 +1,7 @@
 window.KITSPRING_PRODUCTS = [
   {
     "id": "solo-business-operating-kit",
+    "coverUrl": "assets/images/solo-business-operating-kit.svg",
     "name": "The Solo Business Operating Kit",
     "collection": "business",
     "type": "Toolkit",
@@ -21,6 +22,7 @@ window.KITSPRING_PRODUCTS = [
   },
   {
     "id": "business-control-centre",
+    "coverUrl": "assets/images/business-control-centre.svg",
     "name": "Business Control Centre",
     "collection": "business",
     "type": "Spreadsheet",
@@ -39,6 +41,7 @@ window.KITSPRING_PRODUCTS = [
   },
   {
     "id": "client-management-documents",
+    "coverUrl": "assets/images/client-management-documents.svg",
     "name": "Client Management Documents",
     "collection": "business",
     "type": "Document Pack",
@@ -57,6 +60,7 @@ window.KITSPRING_PRODUCTS = [
   },
   {
     "id": "client-communication-library",
+    "coverUrl": "assets/images/client-communication-library.svg",
     "name": "Client Communication Library",
     "collection": "business",
     "type": "Template Library",
@@ -75,6 +79,7 @@ window.KITSPRING_PRODUCTS = [
   },
   {
     "id": "pricing-profit-toolkit",
+    "coverUrl": "assets/images/pricing-profit-toolkit.svg",
     "name": "Pricing and Profit Toolkit",
     "collection": "business",
     "type": "Spreadsheet + Guide",
@@ -93,6 +98,7 @@ window.KITSPRING_PRODUCTS = [
   },
   {
     "id": "weekly-focus-planner",
+    "coverUrl": "assets/images/weekly-focus-planner.svg",
     "name": "Weekly Focus Planner",
     "collection": "productivity",
     "type": "Planner",
@@ -111,6 +117,7 @@ window.KITSPRING_PRODUCTS = [
   },
   {
     "id": "everyday-reset-workbook",
+    "coverUrl": "assets/images/everyday-reset-workbook.svg",
     "name": "The Everyday Reset Workbook",
     "collection": "lifestyle",
     "type": "Workbook",
@@ -129,6 +136,7 @@ window.KITSPRING_PRODUCTS = [
   },
   {
     "id": "creative-project-brief",
+    "coverUrl": "assets/images/creative-project-brief.svg",
     "name": "Creative Project Brief",
     "collection": "creative",
     "type": "Template",
@@ -147,6 +155,7 @@ window.KITSPRING_PRODUCTS = [
   },
   {
     "id": "digital-products-starter-guide",
+    "coverUrl": "assets/images/digital-products-starter-guide.svg",
     "name": "Digital Products: A Practical Starter Guide",
     "collection": "guides",
     "type": "Guide",
