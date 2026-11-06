@@ -1,1 +1,19 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>KitSpring Admin</title><link rel="icon" href="../favicon.svg"><link rel="stylesheet" href="admin.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><div class="shell"><aside class="sidebar"><a class="brand" href="../index.html">KitSpring<span>ADMINISTRATION</span></a><nav id="nav"><button data-view="overview" class="active">Overview</button><button data-view="products">Products</button><button data-view="collections">Collections</button><button data-view="pages">Website pages</button><button data-view="posts">Resources & blog</button><button data-view="faqs">FAQs</button><button data-view="media">Media library</button><button data-view="settings">Website settings</button><button data-view="admins" data-role="super_admin">Administrators & roles</button><button data-view="activity">Activity log</button><button data-view="account">Account settings</button></nav><button id="signOut" class="signout">Sign out</button></aside><main class="main"><header><div><small>KITSPRING / PRIVATE WORKSPACE</small><h1 id="heading">Overview</h1></div><span id="who">Not signed in</span></header><section id="login" class="panel login"><h2>Welcome back.</h2><p>Sign in with your authorised KitSpring administrator account.</p><form id="loginForm"><label>Email<input type="email" name="email" autocomplete="username" required></label><label>Password<input type="password" name="password" autocomplete="current-password" required></label><button class="primary">Sign in</button><p id="loginMsg" class="msg" aria-live="polite"></p></form></section><section id="workspace" hidden><div id="notice" role="status"></div><div id="view"></div></section></main></div><script src="config.js"></script><script src="admin.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>KitSpring Admin</title>
+  <meta name="description" content="KitSpring administrator access panel.">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-shell">
+  <div id="app"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
