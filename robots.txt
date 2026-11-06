@@ -1,1 +1,4 @@
-User-agent: *\nAllow: /\nSitemap: https://kitspring.example/sitemap.xml\n
+User-agent: *
+Allow: /
+Disallow: /admin/
+Sitemap: https://kitspring.example/sitemap.xml
