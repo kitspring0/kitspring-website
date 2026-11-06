@@ -1,1 +1,7 @@
-images
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 92" role="img" aria-labelledby="title desc">
+<title id="title">KitSpring</title><desc id="desc">KitSpring wordmark with a simple leaf and spring-inspired mark.</desc>
+<g fill="none" stroke="#C8A45A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M30 62c-2-22 8-39 28-45 1 19-8 34-28 45Z"/><path d="M29 64c9-15 18-25 31-35"/>
+</g>
+<text x="78" y="59" font-family="Manrope, Arial, sans-serif" font-size="49" font-weight="800" letter-spacing="-2" fill="#173B32">KitSpring</text>
+</svg>
