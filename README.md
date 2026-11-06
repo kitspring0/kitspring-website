@@ -41,7 +41,7 @@ KitSpring-Website/
 - Supabase schema with products, collections, pages, posts, FAQs, settings, administrator profiles and activity log.
 - RLS policies and role checks for Super Admin, Admin and Editor.
 - Private Storage bucket with authenticated upload/list/delete restrictions and signed temporary URLs.
-- `/admin/` sign-in, overview, product/collection/page/blog/FAQ/settings CRUD, media interface, admin-role assignment, activity view and password update.
+- `/admin/` sign-in, overview, product/collection/page/blog/FAQ/settings CRUD, media interface, admin-role assignment, activity view and password update. The public homepage footer also links to Admin sign in.
 - Public catalogue fetch from Supabase when configured, with bundled fallback if not configured.
 - Secure external checkout URL handling: only HTTPS checkout URLs are rendered as purchase links.
 
@@ -63,6 +63,10 @@ These are intentionally disclosed rather than represented as complete:
 4. No live Supabase project is configured in this ZIP. Authentication, database policies, storage and end-to-end CMS flows cannot be certified until configured against a real project.
 5. The SQL is provided for Supabase PostgreSQL and includes RLS, but it has not been executed against your project. Validate in a disposable Supabase project before production.
 6. The site does not claim legal compliance for every country. Review privacy/terms against actual analytics, cookies, tax and data handling before launch.
+
+## Admin access is not pre-created
+
+The ZIP intentionally contains no working administrator account and no live Supabase credentials. The Admin URL is `/admin/`. Before sign-in can work, create a Supabase project, run `supabase/schema.sql`, create an Auth user, insert that user's UUID into `public.admin_profiles` as `super_admin`, and replace the placeholders in both `config.js` and `admin/config.js`. Follow `ADMIN-ACCESS-START-HERE.txt` or `docs/SUPABASE-SETUP.md`. Never place a service-role key or password in browser files.
 
 ## Quick start
 

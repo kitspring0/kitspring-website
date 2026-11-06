@@ -1,0 +1,37 @@
+KITSPRING ADMIN ACCESS — READ THIS FIRST
+
+ADMIN URL
+After deployment, open:
+https://YOUR-DEPLOYED-DOMAIN/admin/
+
+WHY YOU CANNOT SIGN IN YET
+This ZIP is source code, not a connected website or a pre-created administrator account.
+Both admin/config.js and the root config.js intentionally contain placeholder Supabase
+values. No default email or password is supplied. The admin page will now detect those
+placeholders and display a clear setup message instead of trying to connect to a fake URL.
+
+REQUIRED ONE-TIME SETUP
+1. Create a Supabase project.
+2. In Supabase Authentication > Users, create an Auth user with an email you control.
+3. Run the complete supabase/schema.sql in Supabase SQL Editor.
+4. Copy that Auth user's UUID.
+5. Run the bootstrap SQL below in Supabase SQL Editor, replacing the UUID and display name:
+
+insert into public.admin_profiles(user_id, display_name, role, active)
+values ('PASTE-AUTH-USER-UUID-HERE', 'KitSpring Owner', 'super_admin', true);
+
+6. In BOTH config files (root config.js and admin/config.js), replace the example
+   Supabase URL and anon/publishable key with the real Project URL and anon/publishable key.
+7. Commit/upload those two config.js files to the deployed repository.
+8. Deploy the site, then visit /admin/ and sign in with the Auth user's email/password.
+
+DEPLOYMENT ROOT
+The contents inside kitspring-website-main/ must be the published site root.
+At the published root, index.html, config.js, _headers, supabase/, and admin/ must be
+siblings. Do not publish the ZIP file itself or leave the website nested one folder too
+deep unless your Cloudflare Pages output directory is explicitly set to that folder.
+
+SECURITY
+Never put a Supabase service_role/secret key or an admin password in website files.
+The anon/publishable key is intended for browser use; keep database Row Level Security
+enabled. Do not create a public signup or bootstrap endpoint.
