@@ -1,0 +1,1 @@
+User-agent: *\nAllow: /\nSitemap: https://kitspring.example/sitemap.xml\n
