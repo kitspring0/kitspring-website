@@ -1,0 +1,15 @@
+KITSPRING ADMIN - START HERE
+
+Admin URL (canonical):  https://YOUR-DOMAIN.com/admin/
+(/admin.html and /admin redirect there.)
+
+No admin account or password is included. To get in:
+ 1. Create a Supabase project.                      (docs/SUPABASE-SETUP.md, step 1)
+ 2. Run supabase/schema.sql in the SQL Editor.      (step 2)
+ 3. Authentication > Users > Add user (you).        (step 3)
+ 4. Copy that user's UUID.                          (step 4)
+ 5. Run the insert into public.admin_profiles SQL.  (step 5)
+ 6. Put Project URL + anon key in config.js.        (step 6)
+ 7. Redeploy and open /admin/.                      (step 7)
+
+Never put a service_role / secret key in any file. The site refuses to use one.
