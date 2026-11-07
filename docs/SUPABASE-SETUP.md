@@ -1,47 +1,52 @@
 # Supabase setup and first Super Admin
 
-**Important:** No administrator account or password is included in the ZIP. The `/admin/` page becomes usable only after completing every step below. For a short checklist, also read `ADMIN-ACCESS-START-HERE.txt`.
+No administrator account or password is included. `/admin/` works only after you complete these steps. There is **no public sign-up**; roles are granted only by the database owner (first Super Admin) and afterwards by a Super Admin.
 
-## 1. Create the project
-1. On your Android browser, open https://supabase.com and create a free project.
-2. Choose a strong database password and keep it in a password manager. Free projects can pause after inactivity and have usage/storage limits; check the current Supabase pricing page before launch.
-3. In Project Settings → API, copy the Project URL and the **anon/publishable** key. Never copy the `service_role` or secret key into website files.
+## 1. Create the Supabase project
+1. Go to https://supabase.com, create an account and a new project. Save the database password in a password manager.
+2. Project Settings → API: copy the **Project URL** and the **anon / publishable** key. Never copy the `service_role` / secret key anywhere in this website.
 
-## 2. Create the first account
-1. In Supabase open Authentication → Users → Add user.
-2. Create the first administrator account with an email you control and a strong unique password. Confirm the user if the dashboard offers that option.
-3. Open that user's details and copy the Auth user UUID.
-4. Open SQL Editor → New query. Paste and run the complete `supabase/schema.sql` file first.
-5. Run this separate query, replacing the UUID and display name with your own values:
+## 2. Run the SQL schema
+1. SQL Editor → New query → paste the whole of `supabase/schema.sql` → Run. It is safe to re-run.
+2. It creates the tables (`admin_profiles`, `products`, `collections`, `pages`, `posts`, `faqs`, `settings`, `activity_log`), indexes, `updated_at` triggers, Row Level Security policies, role functions, the public `kitspring-media` image bucket with storage policies, starter settings, the five collections and nine Coming Soon products.
 
+## 3. Create the first Auth user
+Authentication → Users → **Add user** → your email + a strong unique password (tick *Auto Confirm User* if offered).
+
+## 4. Get the user's UUID
+Open the user in the list and copy its **UID**.
+
+## 5. Assign the Super Admin role
+SQL Editor, new query (replace the UUID and name):
 ```sql
 insert into public.admin_profiles(user_id, display_name, role, active)
-values ('PASTE-AUTH-USER-UUID-HERE', 'KitSpring Owner', 'super_admin', true);
+values ('PASTE-AUTH-USER-UUID-HERE', 'Your Name', 'super_admin', true);
 ```
+Only do this for yourself. Later staff are added from **Administrators** inside the dashboard (create their Auth user first, then assign a role by email).
 
-6. Open `https://YOUR-SITE.pages.dev/admin/`, sign in using the account created in step 2, and confirm the Overview appears.
-7. Add future users under Authentication → Users first. Then use Administrators & roles in the KitSpring dashboard to assign Editor or Admin. Only the Super Admin can manage roles.
+## 6. Configure the website
+Copy `config.example.js` to `config.js` (a placeholder `config.js` ships by default) and paste your Project URL and anon key. This one file is used by the public site **and** `/admin/`. Commit/upload it and redeploy.
 
-**Important:** the bootstrap SQL is a deliberate manual owner-only step. There is no public signup or public role-escalation endpoint. Do not run a role assignment for an untrusted UUID.
+## 7. Open the dashboard
+Visit `https://YOUR-DOMAIN.com/admin/` and sign in. If the page shows a set-up screen, config.js still has placeholder values.
 
-## 3. Configure the website
-1. In the project root, open the included `config.js` file. (It is prefilled with safe placeholders.)
-2. Put your Supabase Project URL and anon/publishable key into `config.js`.
-3. In `admin/`, open the included `config.js` file and put the same two public values there.
-4. Upload both config files to the GitHub repository. The anon key is public by design; RLS policies protect data. Never upload a service-role key.
-5. Run `supabase/schema.sql` in Supabase SQL Editor. It creates the CMS tables, policies, private media bucket and starter catalogue. The starter products are all Coming Soon.
+## Roles (enforced by Postgres RLS, not only by the UI)
+| Capability | Editor | Admin | Super Admin |
+|---|---|---|---|
+| Create / edit products, pages, articles, FAQs | ✔ | ✔ | ✔ |
+| Publish / unpublish / archive content | ✔ | ✔ | ✔ |
+| Delete content | ✘ | ✔ | ✔ |
+| Create / edit / delete collections | ✘ | ✔ | ✔ |
+| Website settings | ✘ | ✔ | ✔ |
+| Activity log (read) | ✘ | ✔ | ✔ |
+| Upload media / delete own uploads | ✔ | ✔ | ✔ |
+| Delete any media | ✘ | ✔ | ✔ |
+| Manage administrators and roles | ✘ | ✘ | ✔ |
 
-## 4. Media library
-The SQL creates a private `kitspring-media` bucket, 5 MB maximum image size, and PNG/JPEG/WebP/SVG MIME restrictions. Authenticated staff upload into a folder named with their own Auth UUID. The dashboard creates one-hour signed URLs for copying. These temporary URLs expire; do not use them as permanent public product image URLs. For public images, either configure a dedicated public bucket and carefully reviewed public-read policy, or use an approved image CDN. Do not make the private admin bucket public.
+The last active Super Admin cannot be demoted, disabled or removed (database trigger).
 
-## 5. Roles
-- **Super Admin:** all CMS permissions and administrator role management.
-- **Admin:** content and settings administration; cannot manage administrator roles.
-- **Editor:** content creation and updates; cannot manage site settings/collections, delete records, or inspect the activity log.
+## Public visibility rules
+Anonymous visitors can read only: products with status `published` or `coming_soon` and `visible = true`; visible collections; published pages; published posts; published FAQs; and the public settings keys (`site`, `contact`, `social`, `announcement`, `seo`, `newsletter`). Drafts and archived items are never readable publicly.
 
-The database uses RLS. Hiding a navigation item is not the security boundary. Never disable RLS to troubleshoot.
-
-## 6. Public website integration
-The storefront reads public products from Supabase when `config.js` is present and the database is reachable. It falls back to the bundled starter catalogue if the connection is not configured. Public products are limited by RLS to visible `published` or `coming_soon` records. A checkout link alone does not make a product purchasable: publish only after the external checkout has been tested. The product detail UI shows a purchase link only for a published product with a checkout URL.
-
-The CMS tables for pages, posts and FAQs are available to administrators and have public-read policies for published content. Their full public-site templating/rendering is a remaining integration task; the existing static About, FAQ and Resources pages are still the visitor-facing versions in this package. Do not assume editing those CMS records currently rewrites the static page layout.
+## Password reset
+Authentication → URL Configuration: add `https://YOUR-DOMAIN.com/admin/` to **Redirect URLs** so reset emails return to the admin. Configure SMTP for reliable delivery.

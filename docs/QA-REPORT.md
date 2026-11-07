@@ -1,35 +1,31 @@
 # KitSpring QA report
 
-**Review date:** 6 November 2026
+Date: 7 November 2026. Tested with Chromium (Playwright) against a local static server, desktop 1366×900 and mobile 390×844 emulation.
 
-## Checks performed on the packaged source
-
-| Check | Result | Notes |
+## Results
+| # | Check | Result |
 |---|---|---|
-| Original uploaded ZIP integrity | PASS | Original archive opened; no corrupt member reported. |
-| Required project files | PASS | Public pages, admin UI, SQL schema, config templates, docs and artwork present. |
-| Local HTML asset/link references | PASS | 16 HTML documents parsed; zero missing local `href`/`src` references after adding placeholder config files. |
-| JavaScript syntax | PASS | `node --check` passed for public `main.js`, fallback `products.js` and admin `admin.js`. |
-| Sitemap XML syntax | PASS | Corrected malformed literal newline escapes; XML parser reads 14 URLs. |
-| Web manifest JSON | PASS | Included manifest is valid JSON. |
-| Product starter catalogue | PASS | Nine fallback product records across five collections; all remain Coming Soon. |
-| SVG assets | PASS | Temporary brand mark plus nine original product-cover SVGs included. |
-| Secret scan | PASS | No live service-role, payment secret or administrator credential detected in source. |
-| Browser interaction test | NOT COMPLETED | Chromium was available, but browser navigation was blocked by the execution environment (`ERR_BLOCKED_BY_ADMINISTRATOR`); no browser pass is claimed. |
-| Supabase SQL execution | NOT COMPLETED | No Supabase project credentials supplied; SQL was reviewed but not executed against PostgreSQL. |
-| Supabase Auth/RLS/Storage end-to-end | NOT COMPLETED | Requires the owner's Supabase project and bootstrap administrator. |
-| Cloudflare deployment | NOT COMPLETED | Requires the owner's GitHub and Cloudflare accounts. |
-| Checkout/payment test | NOT COMPLETED | No provider account or product checkout link supplied. |
+| 1 | HTML well-formedness (19 files: tags balanced, doctype, no duplicate ids) | Pass. This is a structural check, **not** the W3C validator. |
+| 2 | JavaScript syntax (`node --check`, 5 files) | Pass |
+| 3 | CSS brace balance (2 files) | Pass (structural only) |
+| 4 | JSON (`site.webmanifest`) | Pass |
+| 5 | Sitemap XML parses, 22 URLs, every target exists | Pass |
+| 6–7 | Internal links and asset references (637 checked) | 0 broken |
+| 8 | Admin route: `/admin/` opens; `/admin.html` redirects to `/admin/`; homepage and footer link to `admin/` | Pass |
+| 9 | Config validation: placeholders → set-up screen with no connection attempt; secret/service-role key refused by both site and admin | Pass |
+| 10 | Admin UI (31 checks, **mock Supabase client**): login form, show/hide password, wrong-password error, sign-in, dashboard, product/FAQ/page/post/collection create, validation (non-HTTPS checkout rejected), publish/unpublish/archive/delete, settings save, media page, administrators page, activity log, password-mismatch, sign-out, editor role restrictions, mobile admin menu | 31/31 pass |
+| 11 | Public site (49 checks): all 16 public pages on desktop and mobile with no JS errors and no horizontal scroll; mobile menu; shop search/filter/sort/empty state; product states; header search; CMS integration with mocked REST (products→shop/collection/product page with HTTPS Buy button, announcement, FAQ, articles, CMS page overriding About); Supabase failure → bundled catalogue still shown | 49/49 pass |
+| 12 | Database schema review (manual): RLS on all 8 tables, public read limited to published/visible rows, editor/admin/super-admin split, immutable activity log, last-Super-Admin trigger, HTTPS/price/slug constraints, storage policies | Reviewed, **not executed** |
 
-## Issues found and addressed
+## NOT verified (be clear about these)
+- **No live Supabase project was available.** Real authentication, real RLS behaviour, storage uploads and the SQL file itself were **not executed**. The admin and CMS tests used an in-memory mock of the Supabase client; they prove the interface logic, not the server. Run the schema and a real sign-in before launch. No successful real login is claimed.
+- `schema.sql` was not run against PostgreSQL (none available here); it is reviewed by reading only. If Supabase reports an error, send it for a fix.
+- Google Fonts and the pinned supabase-js CDN script could not load in the offline test environment (fonts fell back to system fonts; the library was stubbed). Verify both in a real browser.
+- Mobile checks used Chromium device emulation, not a physical Android phone.
+- No Lighthouse/performance audit, no screen-reader testing, no cross-browser testing (Firefox/Safari).
+- Real checkout, email delivery and password-reset emails depend on your own provider setup.
 
-- The original sitemap contained literal `\\n` characters rather than actual line breaks. Rewritten as valid XML.
-- The admin CMS and database schema were absent. Added an initial implementation and role-based RLS policies.
-- The uploaded project did not include product artwork. Added nine original SVG cover illustrations.
-- Added root and admin configuration placeholders so pages do not reference missing local config files.
-- Added HTTPS-only validation before rendering external checkout links.
-- Added a database guard against accidentally removing the final active Super Admin.
-
-## Remaining release gates
-
-Before public launch, configure Supabase, run and validate the SQL schema, bootstrap the first Super Admin, set the two config files, verify RLS with each role, and test the public catalogue and media flow. Configure a public asset delivery strategy for uploaded images. Complete a real test purchase with the selected provider. Replace the example domain in canonical URLs and sitemap.
+## Known limitations
+- Product, article and CMS page URLs use query strings (`product.html?slug=…`) because the site is static. Search engines can index them but dedicated pre-rendered pages would be stronger for SEO.
+- Canonical URLs use the placeholder `https://kitspring.example` until you replace it (see REMAINING-MANUAL-CONFIGURATION.md).
+- Roles are enforced by RLS, but an Editor can publish content (not delete). Tighten the policies if you want publishing to be Admin-only.
