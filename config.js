@@ -3,6 +3,6 @@
    Row Level Security in supabase/schema.sql protects the data.
    NEVER put a service_role or secret key in this file: the site and admin refuse to use one. */
 window.KITSPRING_CONFIG = {
-  supabaseUrl: "https://YOUR_PROJECT.supabase.co",
-  supabaseAnonKey: "YOUR_SUPABASE_ANON_OR_PUBLISHABLE_KEY"
+  supabaseUrl: "https://vulrfxaegleqprgqyqfk.supabase.co",
+  supabaseAnonKey: "sb_publishable_3Ohg_TsQtR__vhzLkzEd5g_XbN99ba_"
 };
